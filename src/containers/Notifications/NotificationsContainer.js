@@ -25,9 +25,14 @@ function NotificationsContainer(): React$Element<any> {
         return () => clearInterval(intervalId);
     }, []);
 
+    let isLoading = false;
+
     const loadNotifications = async () => {
+        if (isLoading) return;
+        isLoading = true;
+
         try {
-            const notifications = await getNotifications();
+            const notifications = await getNotifications(userId);
 
             dispatch(setNotifications(userId, notifications.data.data));
         } catch (e) {
@@ -36,6 +41,8 @@ function NotificationsContainer(): React$Element<any> {
                 dispatch(setLoggingOut());
                 window.location.href = '/login';
             }
+        } finally {
+            isLoading = false;
         }
     };
 

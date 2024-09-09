@@ -22,7 +22,7 @@ const routes = [{
     component: Login
 }, {
     path: '/dashboard',
-    name: Dashboard,
+    name: 'Dashboard',
     component: Dashboard,
     authedRoute: true
 }, {

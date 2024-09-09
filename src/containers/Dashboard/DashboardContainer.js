@@ -39,7 +39,7 @@ export default function DashboardContainer({
 
         // run if refresh button is clicked
         if (isRefresh || !currentRange) {
-            const dashboard = await getDashboardData(`${DATE_TO_UTC(dateRange.from).split('T')[0]} 00:00:00`, `${DATE_TO_UTC(dateRange.to).split('T')[0]} 23:59:59`);
+            const dashboard = await getDashboardData(`${DATE_TO_UTC(dateRange.from).split('T')[0]}-00:00:00`, `${DATE_TO_UTC(dateRange.to).split('T')[0]}-23:59:59`);
 
             dispatch(setDashboardData(dashboard.data));
 
@@ -52,7 +52,7 @@ export default function DashboardContainer({
 
         // run if date range is changed
         if (!moment(currentRange.from).isSame(moment(dateFrom)) || !moment(currentRange.to).isSame(moment(dateTo))) {
-            const dashboard = await getDashboardData(`${DATE_TO_UTC(dateRange.from).split('T')[0]} 00:00:00`, `${DATE_TO_UTC(dateRange.to).split('T')[0]} 23:59:59`);
+            const dashboard = await getDashboardData(`${DATE_TO_UTC(dateRange.from).split('T')[0]}-00:00:00`, `${DATE_TO_UTC(dateRange.to).split('T')[0]}-23:59:59`);
 
             dispatch(setDashboardData(dashboard.data));
 
