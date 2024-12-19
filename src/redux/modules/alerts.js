@@ -135,6 +135,12 @@ const initialState = {
                 clickable: false
             },
             {
+                header: 'Broker',
+                accessor: 'broker',
+                disableFilters: false,
+                clickable: false
+            },
+            {
                 header: 'Assigned',
                 accessor: 'assignedUser',
                 disableFilters: false,

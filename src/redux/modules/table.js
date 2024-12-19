@@ -119,6 +119,10 @@ const initialState = {
             value: []
         },
         {
+            id: 'broker',
+            value: []
+        },
+        {
             id: 'status',
             value: []
         },

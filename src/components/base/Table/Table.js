@@ -95,7 +95,7 @@ function SelectColumnFilter({
 
     const header = Header.toLowerCase();
     const columnFiltersWithCheckbox = ['behaviourCode', 'escalation', 'assignedUser', 'status'];
-    const columnFiltersSearcheable = ['book', 'client'];
+    const columnFiltersSearcheable = ['book', 'client', 'broker'];
     const columnFiltersWithSearchbox = ['isin', 'summary'];
     const rootPath = window.location.pathname.split('/')[1];
 
@@ -235,6 +235,8 @@ function SelectColumnFilter({
                 return columnFilterValues.books.map(value => ({ name: value, label: value, value: value }));
             case 'behaviourCode':
                 return columnFilterValues.behaviours.map(value => ({ name: value.internalCode, label: value.internalCode, value: value.id }));
+            case 'broker':
+                return columnFilterValues.brokers.map(value => ({ name: value, label: value, value: value }));
             case 'isin': // todo
                 return [];
             case 'summary':
