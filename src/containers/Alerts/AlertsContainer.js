@@ -30,6 +30,7 @@ export default function AlertsContainer({
     const { isRowsSelected, selectedRows, appliedFilters } = useSelector(({ table }) => table);
     const { table, selected, dateRange } = useSelector(({ alerts }) => alerts);
     const behaviours = useSelector(({ behaviours }) => behaviours);
+    const columnFilterValues = useSelector(({ alerts }) => alerts.columnFilterValues);
     const breadcrumb = [
         {
             label: 'Home',
@@ -75,6 +76,10 @@ export default function AlertsContainer({
     };
 
     const loadColumnFilterValues = async () => {
+        if (columnFilterValues) {
+            return;
+        }
+
         const { data } = await getColumnFilterValues();
         let dataCopy = data;
 

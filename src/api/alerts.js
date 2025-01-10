@@ -52,6 +52,10 @@ export async function getAlerts(
                 key = 'books';
                 value = value.map(val => val.value);
                 break;
+            case 'broker':
+                key = 'brokers';
+                value = value.map(val => val.value);
+                break;
             default:
                 key = body.id;
                 value = body.value;
@@ -68,6 +72,8 @@ export async function getAlerts(
     if (sort.column === 'assignedUser') sortColumn = 'assignedUserId';
 
     const withSorting = () => sort && sort.column !== '' && sort.type !== '' ? `&sort=${sortColumn},${sort.type}` : '';
+
+    console.log(filterBody);
 
     return await makeApiCall(`${GET_ALERTS}?page=${page}&size=${size}${withSorting()}`, 'POST', filterBody);
 }
