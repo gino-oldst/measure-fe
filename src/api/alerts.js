@@ -73,8 +73,6 @@ export async function getAlerts(
 
     const withSorting = () => sort && sort.column !== '' && sort.type !== '' ? `&sort=${sortColumn},${sort.type}` : '';
 
-    console.log(filterBody);
-
     return await makeApiCall(`${GET_ALERTS}?page=${page}&size=${size}${withSorting()}`, 'POST', filterBody);
 }
 
