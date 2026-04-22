@@ -125,7 +125,11 @@ export default function AlertsContainer({
                 (filter.id !== 'quantity' && filter.value.length > 0) ||
                 (filter.id === 'quantity' && filter.value > 0)
             ).map(filter => `${filter.id}: [${filter.id.toLowerCase() === 'behaviourcode'
-                    ? filter.value.map(val => behaviours.table.data.filter(code => code.id === val)[0].code)
+                    ? filter.value.map(val => {
+                        const match = behaviours.table.data.filter(code => code.id === val)[0];
+
+                        return match ? match.code : val;
+                    })
                     : filter.id.toLowerCase() === 'assigneduser'
                         ? filter.value.map(val => selected.assignees.filter(user => (user.id !== 999999 ? user.id : null) === val)[0].fullName)
                         : typeof filter.value === 'object'
