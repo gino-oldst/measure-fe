@@ -1,0 +1,23 @@
+FROM node:14-buster
+
+WORKDIR /app
+
+# Debian Buster reached EOL Jun 2024 — repos moved to archive.debian.org
+# -o Acquire::Check-Valid-Until=false bypasses expired Release file signatures
+RUN sed -i 's|deb.debian.org|archive.debian.org|g' /etc/apt/sources.list && \
+    sed -i '/buster-updates/d' /etc/apt/sources.list && \
+    apt-get update -o Acquire::Check-Valid-Until=false && \
+    apt-get install -y python2.7 --no-install-recommends && \
+    ln -sf /usr/bin/python2.7 /usr/local/bin/python && \
+    rm -rf /var/lib/apt/lists/*
+
+# Install dependencies in a separate layer so they're cached
+COPY package.json package-lock.json ./
+RUN npm ci
+
+# Source is mounted as a volume at runtime — no COPY needed for dev
+EXPOSE 3000
+
+ENV NODE_PATH=src
+
+CMD ["npx", "env-cmd", "-f", ".env", "react-scripts", "start"]

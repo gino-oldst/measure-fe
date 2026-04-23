@@ -57,7 +57,7 @@ export default async function makeApiCall(
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${accessToken}`
             },
-            body: endpoint.includes('download-list') ? JSON.stringify(data) : {}
+            body: endpoint.includes('download-list') ? JSON.stringify(data) : null
         })
             .then(response => {
                 response.blob().then(blob => {
@@ -66,10 +66,14 @@ export default async function makeApiCall(
 
                     a.href = url;
                     a.download = `${endpoint.includes('alerts-record') ? 'alert-record' : endpoint.includes('download-list') ? 'alert-list' : 'dashboard'}.xlsx`;
+                    document.body.appendChild(a);
                     a.click();
+                    document.body.removeChild(a);
                 });
             })
             .catch(err => console.error(err));
+
+        return;
     } else {
         request.headers = {
             Authorization: `Bearer ${accessToken}`

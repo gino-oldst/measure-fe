@@ -84,8 +84,8 @@ export default function DashboardContainer({
 
     const handleDashboardDownload = async () => {
         await downloadDashboardData(
-            `${DATE_TO_UTC(dateRange.from).split('T')[0]} 00:00:00`,
-            `${DATE_TO_UTC(dateRange.to).split('T')[0]} 23:59:00`
+            `${DATE_TO_UTC(dateRange.from).split('T')[0]}-00:00:00`,
+            `${DATE_TO_UTC(dateRange.to).split('T')[0]}-23:59:00`
         );
     };
 

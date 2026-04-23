@@ -6,6 +6,50 @@
 - UI testing
 - Update script for create new route for setting which navigation it belong.
 
+## Docker Dev Environment
+
+Run the dev server in Docker — no local Node installation required.
+
+**Prerequisites:** Docker Desktop
+
+### First time / after `package.json` changes
+
+```bash
+docker compose build
+```
+
+### Start dev server
+
+```bash
+docker compose up
+```
+
+Open [http://localhost:3000](http://localhost:3000). Hot reload is enabled via filesystem polling.
+
+### Run in background
+
+```bash
+docker compose up -d
+docker compose logs -f   # tail logs
+```
+
+### Stop
+
+```bash
+docker compose down
+```
+
+### Install a new package
+
+```bash
+docker compose run --rm app npm install <package>
+docker compose build
+```
+
+> **Note:** The image uses `node:14-buster` with `linux/amd64` emulation due to `node-sass@4.14.1` requiring Python 2 and pre-built binaries only existing for Node 14. The `.env` file is loaded via `env_file` and never baked into the image.
+
+---
+
 ## Available Scripts
 
 Clone repo
