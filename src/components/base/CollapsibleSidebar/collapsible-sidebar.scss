@@ -4,6 +4,7 @@
 .collapsible-sidebar {
     background-color: $color-sidebar-1;
     height: 100%;
+    max-height: calc(100vh - #{$height-navmenu});
     width: $sidebar-width;
     transition: all 0.3s;
     color: $color-brand-3;
