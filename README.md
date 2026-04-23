@@ -74,6 +74,48 @@ Your app is ready to be deployed!
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
+## Releasing / Versioning
+
+The current version is shown at the bottom of the sidebar once logged in. It reads from `package.json#version`.
+
+Versioning is automated via [`commit-and-tag-version`](https://github.com/absolute-version/commit-and-tag-version) and driven by conventional commits (`feat:`, `fix:`, `perf:`, `BREAKING CHANGE:`).
+
+### First-ever release (one-time)
+
+The first release needs a flag so the tool doesn't look for a non-existent previous tag:
+
+```bash
+npm run release:first
+git push --follow-tags origin master
+```
+
+This seeds `v1.0.0` and creates `CHANGELOG.md`.
+
+### Subsequent releases
+
+```bash
+npm run release
+git push --follow-tags origin master
+```
+
+The tool inspects commits since the last tag and auto-bumps:
+
+| Commit type | Bump |
+|---|---|
+| `fix: …` | patch (`1.0.0` → `1.0.1`) |
+| `feat: …` | minor (`1.0.0` → `1.1.0`) |
+| Any commit body containing `BREAKING CHANGE:` | major (`1.0.0` → `2.0.0`) |
+
+`package.json` is updated, `CHANGELOG.md` is regenerated, a `chore(release): x.y.z` commit is created, and a `vx.y.z` git tag is placed on it.
+
+### Dry run
+
+To preview what the next release will do without writing anything:
+
+```bash
+npm run release -- --dry-run
+```
+
 ## Code-generation
 
 The project comes with code creation to speed things up.
