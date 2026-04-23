@@ -6,6 +6,7 @@ import { IoMdMenu, IoMdClose } from 'react-icons/io';
 import { MdKeyboardArrowDown } from 'react-icons/md';
 import Typography from '../Typography/Typography';
 import type { Menu } from '../../../types';
+import { version } from '../../../../package.json';
 import './collapsible-sidebar.scss';
 
 type Props = {
@@ -63,6 +64,7 @@ export default function CollapsibleSidebar({
                 </div>
 
                 {children}
+                <div className='collapsible-sidebar__version'>v{version}</div>
             </div>
         </div>
     );

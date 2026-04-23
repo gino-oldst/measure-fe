@@ -8,6 +8,8 @@
     transition: all 0.3s;
     color: $color-brand-3;
     flex: 0 0 $sidebar-width;
+    display: flex;
+    flex-direction: column;
 
     &.is-open {
         width: 55px;
@@ -25,10 +27,23 @@
 
     &__content {
         transition: all 0.3s;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
 
         &.is-visible {
             display: none;
         }
+    }
+
+    &__version {
+        margin-top: auto;
+        padding: 16px;
+        font-size: 12px;
+        opacity: 0.6;
+        text-align: center;
+        letter-spacing: 0.03em;
     }
 
     &__content-menu {
