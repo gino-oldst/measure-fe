@@ -6,7 +6,7 @@ React web app for the Mariana UFP dashboard (alerts, behaviours, restricted list
 
 Operational guides (access requires Old.St Google Workspace):
 
-- [Mariana Azure VPN Setup Guide](https://docs.google.com/document/d/1ZdRK127utbDbPKME7tdHBwsogqYaUALcZjxFn8tjVW8/edit?tab=t.0) — connect to the Mariana Azure network
+- [Mariana Azure VPN Setup Guide](https://docs.google.com/document/d/1LwsSWcW_bKKQYb2iCcsnpduWUoeyyKKOSo-Rsas-9H4/edit?tab=t.0) — connect to the Mariana Azure network
 - [Azure Deployment](https://docs.google.com/document/d/1ZdRK127utbDbPKME7tdHBwsogqYaUALcZjxFn8tjVW8/edit?tab=t.0) — deploy the FE to Azure
 
 ---
