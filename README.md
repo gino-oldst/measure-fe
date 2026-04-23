@@ -1,153 +1,198 @@
-# Old.St Labs React Web App Template
+# Project Measure — Web
 
-## TODO
-- set `animation={false}` to Modal and add a transition. This will fix the error `Warning: findDOMNode is deprecated in StrictMode`
-- Flow name mapper (not working)
-- UI testing
-- Update script for create new route for setting which navigation it belong.
-
-## Docker Dev Environment
-
-Run the dev server in Docker — no local Node installation required.
-
-**Prerequisites:** Docker Desktop
-
-### First time / after `package.json` changes
-
-```bash
-docker compose build
-```
-
-### Start dev server
-
-```bash
-docker compose up
-```
-
-Open [http://localhost:3000](http://localhost:3000). Hot reload is enabled via filesystem polling.
-
-### Run in background
-
-```bash
-docker compose up -d
-docker compose logs -f   # tail logs
-```
-
-### Stop
-
-```bash
-docker compose down
-```
-
-### Install a new package
-
-```bash
-docker compose run --rm app npm install <package>
-docker compose build
-```
-
-> **Note:** The image uses `node:14-buster` with `linux/amd64` emulation due to `node-sass@4.14.1` requiring Python 2 and pre-built binaries only existing for Node 14. The `.env` file is loaded via `env_file` and never baked into the image.
+React web app for the Mariana UFP dashboard (alerts, behaviours, restricted list).
 
 ---
 
-## Available Scripts
+## Prerequisites
 
-Clone repo
-### `git clone https://gitlab.com/project-structure-templates/react-web-app.git`
+You need **one** of:
 
-Install packages
-### `npm install` or `yarn install`
+- **Node 20.x LTS** via [nvm](https://github.com/nvm-sh/nvm) (recommended — faster, no container overhead)
+- **Docker Desktop** (fallback — uses a pinned legacy image)
 
-In the project directory, you can run:
-### `npm start` or `yarn start`
+You also need the backend running and reachable at the URL in your local `.env` (see [Environment](#environment) below).
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+---
 
-### `npm build` or `yarn build`
+## Quick Start — Native npm (recommended)
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```bash
+nvm use              # reads .nvmrc → Node 20 LTS (installs it via `nvm install lts/iron` if missing)
+npm install          # .npmrc pins legacy-peer-deps=true
+npm start            # http://localhost:3000
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+The native path works on any modern Node because of three compatibility shims committed to this repo:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- `sass` (dart-sass) replaces the unmaintainable `node-sass@4.14.1`
+- `.npmrc` has `legacy-peer-deps=true` — bypasses npm 7+ strict peer-dep enforcement (react-scripts 4 + Storybook 6 have loose peer ranges)
+- All webpack scripts set `NODE_OPTIONS=--openssl-legacy-provider` — enables webpack 4's MD4 hashing on Node 17+ (OpenSSL 3)
+
+---
+
+## Alternative — Docker
+
+Kept as a fallback for machines where Node 20 isn't an option:
+
+```bash
+docker compose build     # first time, or after package.json changes
+docker compose up        # http://localhost:3000
+```
+
+| Task | Command |
+|---|---|
+| Background + tail logs | `docker compose up -d && docker compose logs -f` |
+| Stop | `docker compose down` |
+| Install a new dep | `docker compose run --rm app npm install <pkg> && docker compose build` |
+
+> The image is pinned to `node:14-buster` (with Debian archive repos) for historical compatibility. The native path is preferred on modern hardware.
+
+---
+
+## Environment
+
+Three env files, one per target:
+
+| File | Loaded by |
+|---|---|
+| `.env` | `npm start`, `npm run build` |
+| `.env.staging` | `npm run start:staging`, `npm run build:staging` |
+| `.env.production` | `npm run start:prod`, `npm run build:prod` |
+
+Required keys:
+
+```
+REACT_APP_SITE_TITLE
+REACT_APP_NAV_TITLE
+REACT_APP_API_HOST                    # e.g. http://127.0.0.1:7001
+REACT_APP_X_API_KEY
+REACT_APP_SECRET_KEY
+REACT_APP_CLIENT_CREDENTIALS_INTERNAL
+```
+
+**CRA reads env vars only at startup** — restart `npm start` after editing `.env`.
+
+---
+
+## Scripts
+
+| Script | What it does |
+|---|---|
+| `npm start` | Dev server with `.env` |
+| `npm run start:staging` | Dev server with `.env.staging` |
+| `npm run start:prod` | Dev server with `.env.production` |
+| `npm run build` | Production bundle with `.env` → `build/` |
+| `npm run build:staging` | Production bundle with `.env.staging` |
+| `npm run build:prod` | Production bundle with `.env.production` |
+| `npm test` | Jest |
+| `npm run release` | Conventional-commit-driven version bump + CHANGELOG + tag |
+| `npm run release:first` | One-time release seed (adds `--first-release`) |
+| `npm run create route X` | Scaffold a new route (`domakey`) |
+| `npm run create component X` | Scaffold a new component (`domakey`) |
+
+### Serve a production bundle locally
+
+```bash
+npm run build:prod
+npx serve -s build -l 3001    # http://localhost:3001
+```
+
+---
 
 ## Releasing / Versioning
 
-The current version is shown at the bottom of the sidebar once logged in. It reads from `package.json#version`.
+The current version is displayed at the bottom of the sidebar once logged in. It's read from `package.json#version` at build time, so each deployed bundle reflects whatever version was in `package.json` when it was built.
 
-Versioning is automated via [`commit-and-tag-version`](https://github.com/absolute-version/commit-and-tag-version) and driven by conventional commits (`feat:`, `fix:`, `perf:`, `BREAKING CHANGE:`).
+Versioning is automated via [`commit-and-tag-version`](https://github.com/absolute-version/commit-and-tag-version) and driven entirely by [conventional commits](https://www.conventionalcommits.org/).
 
-### First-ever release (one-time)
-
-The first release needs a flag so the tool doesn't look for a non-existent previous tag:
+### First release (one-time)
 
 ```bash
 npm run release:first
-git push --follow-tags origin master
+git push --follow-tags origin development
 ```
 
-This seeds `v1.0.0` and creates `CHANGELOG.md`.
+Seeds `v1.0.0`, creates `CHANGELOG.md`, commits `chore(release): 1.0.0`, and places the `v1.0.0` tag.
 
 ### Subsequent releases
 
 ```bash
 npm run release
-git push --follow-tags origin master
+git push --follow-tags origin development
 ```
 
-The tool inspects commits since the last tag and auto-bumps:
+The tool reads commits since the last tag and auto-bumps:
 
-| Commit type | Bump |
-|---|---|
-| `fix: …` | patch (`1.0.0` → `1.0.1`) |
-| `feat: …` | minor (`1.0.0` → `1.1.0`) |
-| Any commit body containing `BREAKING CHANGE:` | major (`1.0.0` → `2.0.0`) |
+| Commit type | Bump | Example |
+|---|---|---|
+| `fix:` | patch | 1.0.0 → 1.0.1 |
+| `feat:` | minor | 1.0.0 → 1.1.0 |
+| `BREAKING CHANGE:` in body | major | 1.0.0 → 2.0.0 |
 
-`package.json` is updated, `CHANGELOG.md` is regenerated, a `chore(release): x.y.z` commit is created, and a `vx.y.z` git tag is placed on it.
+`chore` / `test` / `ci` / `style` commits trigger a patch bump but are hidden from `CHANGELOG.md` (configured in `.versionrc.json`).
 
 ### Dry run
-
-To preview what the next release will do without writing anything:
 
 ```bash
 npm run release -- --dry-run
 ```
 
-## Code-generation
+---
 
-The project comes with code creation to speed things up.
+## Code generation (`domakey`)
 
-**Routes**
+### Routes
 
-`npm run create route MyNewRoute` or `yarn run create route MyNewRoute`
-
-This will create 
-```
-├── containers
-|   ├── MyNewRoute (New)
-    |   ├── MyNewRouteContainer.js
-    |   ├── MyNewRouteScreen.js
-    |   ├── my-new-route.scss
-└── ... other route containers
+```bash
+npm run create route MyNewRoute
 ```
 
-also import the route and add an entry in `routes` array of `/src/config/routes.js`
+Creates:
 
-**Components**
-
-`npm run create component MyNewComponent` or `yarn run create component MyNewComponent`
-
-This will create 
 ```
-├── components
-|   ├── MyNewComponent (New)
-    |   ├── MyNewComponent.js
-    |   ├── MyNewComponent.stories.js
-    |   ├── my-new-component.scss
-└── ... other components
+containers/MyNewRoute/
+├── MyNewRouteContainer.js
+├── MyNewRouteScreen.js
+└── my-new-route.scss
 ```
 
+Also adds an entry to `src/config/routes.js`.
 
+### Components
+
+```bash
+npm run create component MyNewComponent
+```
+
+Creates:
+
+```
+components/MyNewComponent/
+├── MyNewComponent.js
+├── MyNewComponent.stories.js
+└── my-new-component.scss
+```
+
+---
+
+## Branching model
+
+- `master` — production releases
+- `development` — integration branch; all feature/fix branches target this
+- `feat/*`, `fix/*`, `chore/*` — work branches
+
+PRs target `development`. Release merges from `development` → `master` happen at tag cut time.
+
+---
+
+## Known warnings (pre-existing)
+
+These surface in dev console or build output and are not caused by recent changes:
+
+- `Spinner children expected string` — reactstrap API change
+- `findDOMNode deprecated in StrictMode` — `react-onclickoutside` library
+- `createMuiTheme renamed to createTheme` — Material-UI v4 legacy API
+- ESLint: `Breadcrumbs` href, unused `isTabletOrMobile` in `AlertDetailScreen`, missing map return in `AlertsScreen`
+
+Tracking for later cleanup — do not block on these.
